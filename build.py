@@ -108,6 +108,7 @@ def render_sidebar(categories, prefix, active_cat_slug=None, active_art_slug=Non
             cls = " active" if (is_current and art["slug"] == active_art_slug) else ""
             out.append(f'<li><a class="{cls.strip()}" href="{prefix}{cat["slug"]}/{art["slug"]}.html">{art["title"]}</a></li>')
         out.append("</ul></details>")
+    out.append(f'<div class="sidebar-footer"><a href="{prefix}editor/index.html" style="color:inherit;">Edit this site</a></div>')
     out.append("</nav>")
     return "\n".join(out)
 
@@ -170,6 +171,18 @@ def build(out_dir):
     (out_dir / "script.js").write_text(SCRIPT_JS)
     if (ROOT / "assets").exists():
         shutil.copytree(ROOT / "assets", out_dir / "assets")
+    if (ROOT / "editor").exists():
+        shutil.copytree(ROOT / "editor", out_dir / "editor")
+
+    (out_dir / "content-index.json").write_text(json.dumps({
+        "categories": [
+            {
+                "slug": c["slug"], "title": c["title"],
+                "articles": [{"slug": a["slug"], "title": a["title"]} for a in c["articles"]],
+            }
+            for c in categories
+        ]
+    }, indent=2))
 
     total_articles = sum(len(c["articles"]) for c in categories)
     cards = []

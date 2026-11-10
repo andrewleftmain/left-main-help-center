@@ -2,7 +2,28 @@
 
 Public help site: https://andrewleftmain.github.io/left-main-help-center/
 
-## Editing an existing article
+## Editing visually, without touching files
+
+There's a lightweight WYSIWYG editor at
+https://andrewleftmain.github.io/left-main-help-center/editor/ — pick an
+article (or "+ New article"), edit it like a normal rich-text document, and
+save. It commits straight to GitHub via the API (and the normal
+build-and-deploy workflow then redeploys the site), so there's no local
+setup at all.
+
+To save, paste in a GitHub token (sidebar field, stored only in your
+browser): a [fine-grained personal access token](https://github.com/settings/personal-access-tokens/new)
+scoped to just the `left-main-help-center` repository, with **Contents:
+Read and write** permission. You can read without a token (public repo);
+saving needs one.
+
+Articles with tables, callout boxes, video embeds, or figure captions open
+in **HTML source** mode automatically, so that formatting isn't
+simplified or dropped — the plain Visual tab is best for prose-only edits.
+A quick sanity check with your own token before relying on it for real
+edits is a good idea.
+
+## Editing an existing article (as a file)
 
 1. Open `content/<category>/<article>.html` (e.g. `content/cadences/stop-cadences.html`).
 2. The top of the file is a small front-matter comment:

@@ -1,0 +1,422 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Editor — Left Main Help Center</title>
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.min.css">
+<link rel="stylesheet" href="../styles.css">
+<style>
+  body { background: var(--bg-muted); }
+  .ed-shell { display: flex; min-height: 100dvh; }
+  .ed-sidebar {
+    flex: 0 0 300px; background: var(--brand-ink); color: #fff; height: 100dvh; overflow-y: auto;
+    position: sticky; top: 0; padding: max(20px, env(safe-area-inset-top,0px)) 16px 20px max(20px, env(safe-area-inset-left,0px));
+  }
+  .ed-sidebar h1 { color: #fff; font-size: 17px; margin: 0 0 4px; }
+  .ed-sidebar .sub { color: #b9ccb9; font-size: 12px; margin-bottom: 16px; }
+  .ed-token { background: rgba(255,255,255,.07); border-radius: var(--r-md); padding: 10px 12px; margin-bottom: 16px; }
+  .ed-token label { display: block; font-size: 11px; color: #cfe0cf; margin-bottom: 4px; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; }
+  .ed-token input { width: 100%; box-sizing: border-box; padding: 6px 8px; border-radius: var(--r-sm); border: 1px solid rgba(255,255,255,.2); background: rgba(0,0,0,.2); color: #fff; font-size: 13px; }
+  .ed-token p { color: #a9c3a9; font-size: 11px; margin: 6px 0 0; line-height: 1.4; }
+  .ed-newbtn { display: block; width: 100%; padding: 9px; margin-bottom: 14px; background: var(--accent-cta); color: var(--accent-cta-ink); border: 0; border-radius: var(--r-md); font-family: var(--font-display); font-weight: 600; font-size: 13.5px; cursor: pointer; }
+  .ed-newbtn:hover { background: var(--accent-cta-hover); }
+  .ed-cat { margin-bottom: 4px; background: transparent; border: none; padding: 0; }
+  .ed-cat > summary { cursor: pointer; font-size: 13px; font-weight: 600; color: #d9e6d9; padding: 7px 8px; border-radius: var(--r-sm); list-style: none; }
+  .ed-cat > summary::-webkit-details-marker { display: none; }
+  .ed-cat > summary:hover { background: rgba(255,255,255,.07); }
+  .ed-cat ul { list-style: none; margin: 2px 0 8px; padding-left: 14px; }
+  .ed-cat a { display: block; color: #c9d6c9; text-decoration: none; font-size: 12.5px; padding: 5px 7px; border-radius: var(--r-sm); border-left: 2px solid transparent; cursor: pointer; }
+  .ed-cat a:hover { background: rgba(255,255,255,.06); color: #fff; }
+  .ed-cat a.active { background: rgba(255,255,255,.1); color: #fff; border-left-color: var(--accent-cta); }
+
+  .ed-main { flex: 1; min-width: 0; padding: max(28px, env(safe-area-inset-top,0px)) max(28px, env(safe-area-inset-right,0px)) 60px max(28px, env(safe-area-inset-left,0px)); max-width: 880px; }
+  .ed-fields { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+  @media (max-width: 700px) { .ed-fields { grid-template-columns: 1fr; } }
+  .ed-field label { display: block; font-size: 12px; font-weight: 600; color: var(--fg-muted); margin-bottom: 4px; }
+  .ed-field input, .ed-field select { width: 100%; box-sizing: border-box; padding: 8px 10px; border: 1px solid var(--border); border-radius: var(--r-sm); font-size: 14px; font-family: var(--font-body); background: var(--bg-raised); color: var(--fg); }
+
+  .ed-tabs { display: flex; gap: 6px; margin: 16px 0 8px; }
+  .ed-tab { padding: 7px 14px; border-radius: var(--r-pill); border: 1px solid var(--border); background: var(--bg-raised); font-size: 13px; font-weight: 600; cursor: pointer; color: var(--fg-muted); }
+  .ed-tab.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+  #editorVisual { background: var(--bg-raised); }
+  .ql-toolbar.ql-snow { border-color: var(--border); border-radius: var(--r-md) var(--r-md) 0 0; background: var(--bg-muted); }
+  .ql-container.ql-snow { border-color: var(--border); border-radius: 0 0 var(--r-md) var(--r-md); min-height: 320px; font-size: 15px; }
+  #editorHtml { width: 100%; min-height: 360px; box-sizing: border-box; font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 13px; padding: 14px; border: 1px solid var(--border); border-radius: var(--r-md); background: var(--bg-raised); color: var(--fg); }
+
+  .ed-actions { display: flex; align-items: center; gap: 12px; margin-top: 18px; }
+  .ed-save { padding: 10px 22px; border-radius: var(--r-pill); border: 0; background: var(--brand); color: #fff; font-family: var(--font-display); font-weight: 600; font-size: 14px; cursor: pointer; }
+  .ed-save:hover { opacity: .9; }
+  .ed-save:disabled { opacity: .5; cursor: default; }
+  .ed-status { font-size: 13px; color: var(--fg-muted); }
+  .ed-status.ok { color: var(--brand); }
+  .ed-status.err { color: #b3261e; }
+
+  .ed-hint { font-size: 12.5px; color: var(--fg-meta); margin: 8px 0 0; }
+  .ed-advanced-warn { display: none; font-size: 12.5px; background: color-mix(in srgb, var(--accent-cta) 14%, var(--bg)); border: 1px solid var(--border); border-left: 3px solid var(--accent-cta); border-radius: var(--r-md); padding: 8px 12px; margin: 10px 0; }
+  .ed-empty { color: var(--fg-muted); padding-top: 60px; text-align: center; }
+</style>
+</head>
+<body>
+<div class="ed-shell">
+  <nav class="ed-sidebar" id="sidebar">
+    <h1>Left Main Help Center</h1>
+    <div class="sub">Content editor</div>
+
+    <div class="ed-token">
+      <label for="tokenInput">GitHub token</label>
+      <input id="tokenInput" type="password" placeholder="ghp_... or github_pat_...">
+      <p>Needed only to save. Use a fine-grained token scoped to just this repo, with <strong>Contents: Read and write</strong>. Stored in this browser only.</p>
+    </div>
+
+    <button class="ed-newbtn" id="newArticleBtn">+ New article</button>
+
+    <div id="catList">Loading&hellip;</div>
+  </nav>
+
+  <main class="ed-main" id="main">
+    <div class="ed-empty">Pick an article on the left, or create a new one.</div>
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.min.js"></script>
+<script>
+(function () {
+  "use strict";
+  const REPO = "andrewleftmain/left-main-help-center";
+  const BRANCH = "main";
+  const API = "https://api.github.com/repos/" + REPO;
+
+  const el = (id) => document.getElementById(id);
+  const tokenInput = el("tokenInput");
+  tokenInput.value = localStorage.getItem("lm_editor_token") || "";
+  tokenInput.addEventListener("input", () => localStorage.setItem("lm_editor_token", tokenInput.value.trim()));
+
+  function b64EncodeUnicode(str) {
+    const bytes = new TextEncoder().encode(str);
+    let binary = "";
+    bytes.forEach((b) => (binary += String.fromCharCode(b)));
+    return btoa(binary);
+  }
+  function b64DecodeUnicode(str) {
+    const binary = atob(str);
+    const bytes = Uint8Array.from(binary, (c) => c.charCodeAt(0));
+    return new TextDecoder().decode(bytes);
+  }
+
+  async function gh(path, opts) {
+    opts = opts || {};
+    const headers = Object.assign({ Accept: "application/vnd.github+json" }, opts.headers || {});
+    const token = tokenInput.value.trim();
+    if (token) headers.Authorization = "token " + token;
+    const res = await fetch(API + path, Object.assign({}, opts, { headers }));
+    if (!res.ok) {
+      const body = await res.text().catch(() => "");
+      throw new Error(`GitHub API ${res.status}: ${body.slice(0, 300)}`);
+    }
+    return res.status === 204 ? null : res.json();
+  }
+
+  // ---- front matter -------------------------------------------------
+  function parseFrontMatter(text) {
+    const m = text.match(/^<!--\s*([\s\S]*?)\s*-->\s*/);
+    const meta = {};
+    let body = text;
+    if (m) {
+      m[1].split("\n").forEach((line) => {
+        line = line.trim();
+        const i = line.indexOf(":");
+        if (i > -1) meta[line.slice(0, i).trim()] = line.slice(i + 1).trim();
+      });
+      body = text.slice(m[0].length);
+    }
+    return { meta, body: body.trim() };
+  }
+  function buildFile(meta, body) {
+    const lines = ["<!--", `title: ${meta.title}`, `order: ${meta.order}`];
+    if (meta.subcat) lines.push(`subcat: ${meta.subcat}`);
+    lines.push("-->");
+    return lines.join("\n") + "\n" + body.trim() + "\n";
+  }
+
+  // ---- index / sidebar -----------------------------------------------
+  let INDEX = null;
+  let current = null; // { catSlug, artSlug, sha, meta, isNew }
+
+  async function loadIndex() {
+    const res = await fetch("../content-index.json?_=" + Date.now());
+    INDEX = await res.json();
+    renderSidebar();
+  }
+
+  function renderSidebar() {
+    const container = el("catList");
+    container.innerHTML = "";
+    INDEX.categories.forEach((cat) => {
+      const details = document.createElement("details");
+      details.className = "ed-cat";
+      const summary = document.createElement("summary");
+      summary.textContent = cat.title;
+      details.appendChild(summary);
+      const ul = document.createElement("ul");
+      cat.articles.forEach((art) => {
+        const li = document.createElement("li");
+        const a = document.createElement("a");
+        a.textContent = art.title;
+        a.dataset.cat = cat.slug;
+        a.dataset.art = art.slug;
+        a.addEventListener("click", () => openArticle(cat.slug, art.slug));
+        li.appendChild(a);
+        ul.appendChild(li);
+      });
+      details.appendChild(ul);
+      container.appendChild(details);
+    });
+  }
+
+  function markActive(catSlug, artSlug) {
+    document.querySelectorAll("#catList a").forEach((a) => {
+      a.classList.toggle("active", a.dataset.cat === catSlug && a.dataset.art === artSlug);
+    });
+    document.querySelectorAll("#catList details").forEach((d) => {
+      if (d.querySelector(`a[data-cat="${catSlug}"]`)) d.open = true;
+    });
+  }
+
+  // ---- quill / editor --------------------------------------------------
+  let quill = null;
+  function ensureQuill() {
+    if (quill) return quill;
+    quill = new Quill("#editorVisual", {
+      theme: "snow",
+      modules: {
+        toolbar: {
+          container: [
+            [{ header: [2, 3, false] }],
+            ["bold", "italic", "underline"],
+            ["link", "image"],
+            [{ list: "ordered" }, { list: "bullet" }],
+            ["blockquote", "code-block"],
+            ["clean"],
+          ],
+          handlers: { image: imageHandler },
+        },
+      },
+    });
+    return quill;
+  }
+
+  function imageHandler() {
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = "image/*";
+    input.onchange = async () => {
+      const file = input.files[0];
+      if (!file) return;
+      try {
+        setStatus("Uploading image…");
+        const path = await uploadImage(file);
+        const range = quill.getSelection(true);
+        quill.insertEmbed(range.index, "image", path);
+        quill.setSelection(range.index + 1);
+        setStatus("Image uploaded.", "ok");
+      } catch (e) {
+        setStatus("Image upload failed: " + e.message, "err");
+      }
+    };
+    input.click();
+  }
+
+  async function uploadImage(file) {
+    const safeName = file.name.toLowerCase().replace(/[^a-z0-9.]+/g, "-");
+    const path = `assets/images/${Date.now()}-${safeName}`;
+    const buf = await file.arrayBuffer();
+    const bytes = new Uint8Array(buf);
+    let binary = "";
+    bytes.forEach((b) => (binary += String.fromCharCode(b)));
+    const b64 = btoa(binary);
+    await gh(`/contents/${path}`, {
+      method: "PUT",
+      body: JSON.stringify({ message: `Add image ${safeName}`, content: b64, branch: BRANCH }),
+    });
+    return "assets/images/" + path.split("/").pop();
+  }
+
+  // ---- tab switching (keep visual + html in sync) -----------------------
+  let mode = "visual";
+  function setMode(next) {
+    if (next === mode) return;
+    if (next === "html") {
+      el("editorHtml").value = quill.root.innerHTML.trim();
+    } else {
+      ensureQuill();
+      quill.setContents([]);
+      quill.clipboard.dangerouslyPasteHTML(0, el("editorHtml").value);
+    }
+    mode = next;
+    el("tabVisual").classList.toggle("active", mode === "visual");
+    el("tabHtml").classList.toggle("active", mode === "html");
+    el("editorVisual").style.display = mode === "visual" ? "" : "none";
+    el("editorHtml").style.display = mode === "html" ? "" : "none";
+  }
+
+  function currentBodyHtml() {
+    if (mode === "html") return el("editorHtml").value;
+    return quill.root.innerHTML.trim();
+  }
+
+  function hasAdvancedBlocks(html) {
+    return /<table|<iframe|class="callout|class="video-embed|class="shot/.test(html);
+  }
+
+  function setStatus(msg, cls) {
+    const s = el("statusMsg");
+    if (!s) return;
+    s.textContent = msg;
+    s.className = "ed-status" + (cls ? " " + cls : "");
+  }
+
+  // ---- rendering the editor form -----------------------------------------
+  function renderForm({ catSlug, artSlug, meta, body, sha, isNew }) {
+    current = { catSlug, artSlug, meta, sha, isNew };
+    const catOptions = INDEX.categories
+      .map((c) => `<option value="${c.slug}" ${c.slug === catSlug ? "selected" : ""}>${c.title}</option>`)
+      .join("");
+
+    el("main").innerHTML = `
+      <h2 style="margin-top:0;">${isNew ? "New article" : "Edit article"}</h2>
+      <div class="ed-fields">
+        <div class="ed-field"><label>Title</label><input id="fTitle" value="${meta.title || ""}"></div>
+        <div class="ed-field"><label>Order</label><input id="fOrder" type="number" value="${meta.order || 50}"></div>
+        <div class="ed-field"><label>Category</label><select id="fCat" ${isNew ? "" : "disabled"}>${catOptions}</select></div>
+      </div>
+      ${isNew ? `<div class="ed-field" style="margin-bottom:14px;"><label>URL slug (lowercase-with-hyphens, no spaces)</label><input id="fSlug" placeholder="my-new-article"></div>` : ""}
+
+      <div class="ed-advanced-warn" id="advWarn">This article contains tables, callouts, video embeds, or figure captions, so it opened in <strong>HTML source</strong> mode to keep that formatting intact. Switching to Visual mode will simplify or drop those elements if you then save from there.</div>
+
+      <div class="ed-tabs">
+        <button class="ed-tab active" id="tabVisual">Visual</button>
+        <button class="ed-tab" id="tabHtml">HTML source</button>
+      </div>
+      <div id="editorVisual"></div>
+      <textarea id="editorHtml" style="display:none;"></textarea>
+      <p class="ed-hint">Visual mode is a plain rich-text editor (headings, bold/italic, lists, links, images). Anything fancier — tables, callout boxes, video embeds — should be edited in HTML source mode so it isn't lost.</p>
+
+      <div class="ed-actions">
+        <button class="ed-save" id="saveBtn">${isNew ? "Create article" : "Save changes"}</button>
+        <span class="ed-status" id="statusMsg"></span>
+      </div>
+    `;
+
+    // Populate BOTH views independently from the original raw body (never
+    // derive one from the other at load time), so simply opening an article
+    // and saving - without touching either tab - round-trips it unchanged.
+    // renderForm rebuilds #main's whole innerHTML each time, so any earlier
+    // Quill instance is now attached to a detached, orphaned node - drop it.
+    quill = null;
+    ensureQuill();
+    quill.setContents([]);
+    quill.clipboard.dangerouslyPasteHTML(0, body || "");
+    el("editorHtml").value = body || "";
+
+    const advanced = hasAdvancedBlocks(body || "");
+    if (advanced) el("advWarn").style.display = "block";
+    mode = advanced ? "html" : "visual";
+    el("tabVisual").classList.toggle("active", mode === "visual");
+    el("tabHtml").classList.toggle("active", mode === "html");
+    el("editorVisual").style.display = mode === "visual" ? "" : "none";
+    el("editorHtml").style.display = mode === "html" ? "" : "none";
+
+    el("tabVisual").addEventListener("click", () => setMode("visual"));
+    el("tabHtml").addEventListener("click", () => setMode("html"));
+    el("saveBtn").addEventListener("click", save);
+  }
+
+  async function openArticle(catSlug, artSlug) {
+    markActive(catSlug, artSlug);
+    setStatusSafe("Loading…");
+    try {
+      const path = `content/${catSlug}/${artSlug}.html`;
+      const data = await gh(`/contents/${path}?ref=${BRANCH}`);
+      const text = b64DecodeUnicode(data.content);
+      const { meta, body } = parseFrontMatter(text);
+      renderForm({ catSlug, artSlug, meta, body, sha: data.sha, isNew: false });
+    } catch (e) {
+      el("main").innerHTML = `<div class="ed-empty">Couldn't load that article.<br>${e.message}</div>`;
+    }
+  }
+
+  function setStatusSafe(msg) {
+    el("main").innerHTML = `<div class="ed-empty">${msg}</div>`;
+  }
+
+  function newArticle() {
+    document.querySelectorAll("#catList a.active").forEach((a) => a.classList.remove("active"));
+    const firstCat = INDEX.categories[0];
+    renderForm({
+      catSlug: firstCat.slug, artSlug: null,
+      meta: { title: "", order: 50 }, body: "<p></p>", sha: null, isNew: true,
+    });
+  }
+
+  function slugify(s) {
+    return s.toLowerCase().trim().replace(/[^a-z0-9\s-]/g, "").replace(/\s+/g, "-").replace(/-+/g, "-");
+  }
+
+  async function save() {
+    if (!tokenInput.value.trim()) {
+      setStatus("Add a GitHub token in the sidebar first.", "err");
+      return;
+    }
+    const title = el("fTitle").value.trim();
+    const order = parseInt(el("fOrder").value, 10) || 50;
+    const catSlug = current.isNew ? el("fCat").value : current.catSlug;
+    let artSlug = current.artSlug;
+    if (current.isNew) {
+      artSlug = slugify(el("fSlug").value);
+      if (!artSlug) {
+        setStatus("Enter a URL slug for the new article.", "err");
+        return;
+      }
+    }
+    if (!title) {
+      setStatus("Title is required.", "err");
+      return;
+    }
+
+    const body = currentBodyHtml();
+    const fileText = buildFile({ title, order }, body);
+    const path = `content/${catSlug}/${artSlug}.html`;
+
+    el("saveBtn").disabled = true;
+    setStatus("Saving…");
+    try {
+      const payload = {
+        message: current.isNew ? `Add article: ${title}` : `Edit article: ${title}`,
+        content: b64EncodeUnicode(fileText),
+        branch: BRANCH,
+      };
+      if (current.sha) payload.sha = current.sha;
+      const result = await gh(`/contents/${path}`, { method: "PUT", body: JSON.stringify(payload) });
+      current.sha = result.content.sha;
+      current.isNew = false;
+      current.catSlug = catSlug;
+      current.artSlug = artSlug;
+      setStatus("Saved. Site will redeploy in about a minute.", "ok");
+      await loadIndex();
+      markActive(catSlug, artSlug);
+    } catch (e) {
+      setStatus("Save failed: " + e.message, "err");
+    } finally {
+      el("saveBtn").disabled = false;
+    }
+  }
+
+  el("newArticleBtn").addEventListener("click", newArticle);
+  loadIndex();
+})();
+</script>
+</body>
+</html>

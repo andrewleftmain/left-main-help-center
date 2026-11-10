@@ -99,6 +99,9 @@ details[open] > summary { margin-bottom: 10px; }
 .sidebar .cat-articles a { display: block; color: #c9d6c9; text-decoration: none; font-size: 13px; padding: 5px 8px; border-radius: var(--r-sm); border-left: 2px solid transparent; }
 .sidebar .cat-articles a:hover { background: rgba(255,255,255,.06); color: #fff; }
 .sidebar .cat-articles a.active { background: rgba(255,255,255,.1); color: #fff; border-left-color: var(--accent-cta); }
+.sidebar-footer { margin-top: 14px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,.12); }
+.sidebar-footer a { font-size: 12.5px; color: #9fb59f; text-decoration: none; }
+.sidebar-footer a:hover { color: #fff; }
 
 .main { flex: 1; min-width: 0; }
 .main-inner { max-width: 880px; margin: 0 auto; padding: max(40px, env(safe-area-inset-top, 0px)) max(24px, env(safe-area-inset-right, 0px)) 80px max(24px, env(safe-area-inset-left, 0px)); }
