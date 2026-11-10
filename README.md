@@ -61,6 +61,31 @@ Put images in `assets/images/`, other attachments (PDFs, videos) in
 — the build rewrites the path to the right relative depth automatically no
 matter which category the article lives in.
 
+## The "Ask a question" chatbot
+
+https://andrewleftmain.github.io/left-main-help-center/ask/ answers
+questions using the help center's own content.
+
+- `worker/` is a Cloudflare Worker: it fetches `corpus.txt` (every article,
+  stitched into plain text by `build.py` on each deploy) and answers with
+  OpenAI's Chat Completions API, using that corpus as context. No
+  embeddings/vector DB - the whole site is small enough to hand over
+  directly, and Cloudflare caches the fetched corpus for ~30 minutes.
+- `ask/index.html` is the chat page (same branding as the rest of the site),
+  calling the Worker's URL.
+- Secrets: `OPENAI_API_KEY` is stored as a Cloudflare secret
+  (`wrangler secret put OPENAI_API_KEY` from `worker/`), never in the repo.
+- To redeploy the Worker after changing `worker/index.js`:
+  ```bash
+  cd worker && npx wrangler deploy
+  ```
+  (the frontend and `corpus.txt` redeploy automatically via the normal
+  GitHub Actions workflow - only the Worker needs this manual step.)
+- Model/cost: defaults to `gpt-4o-mini` (set in `worker/index.js`); change
+  `OPENAI_MODEL` there and redeploy to use a different one.
+- There's no per-visitor rate limiting yet - keep an eye on usage/billing
+  in your OpenAI dashboard if this gets real traffic.
+
 ## Building locally (optional)
 
 Routine edits don't need this — GitHub Actions rebuilds on every push. To
