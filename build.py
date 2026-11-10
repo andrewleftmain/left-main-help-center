@@ -88,6 +88,42 @@ def build_toc(html):
     return [(TAG_RE.sub("", text).strip(), hid) for hid, text in HEADING_RE.findall(html)]
 
 
+_ENTITIES = {
+    "&amp;": "&", "&lt;": "<", "&gt;": ">", "&quot;": '"', "&#39;": "'",
+    "&nbsp;": " ", "&mdash;": "—", "&ndash;": "–", "&hellip;": "…",
+}
+
+
+def html_to_text(html):
+    """Plain-text rendering of an article body, for the chatbot's corpus -
+    not shown to site visitors, just fed to the LLM as context."""
+    text = re.sub(r"<script[\s\S]*?</script>", "", html, flags=re.I)
+    text = re.sub(r"<iframe[\s\S]*?</iframe>", " [embedded video/walkthrough] ", text, flags=re.I)
+    text = re.sub(r"</(p|div|li|h[1-6]|tr|blockquote)>", "\n", text, flags=re.I)
+    text = re.sub(r"<br\s*/?>", "\n", text, flags=re.I)
+    text = re.sub(r"<li[^>]*>", "- ", text, flags=re.I)
+    text = re.sub(r"<h([1-6])[^>]*>", lambda m: "\n" + "#" * int(m.group(1)) + " ", text, flags=re.I)
+    text = TAG_RE.sub("", text)
+    for ent, ch in _ENTITIES.items():
+        text = text.replace(ent, ch)
+    text = re.sub(r"[ \t]+\n", "\n", text)
+    text = re.sub(r"\n{3,}", "\n\n", text)
+    return text.strip()
+
+
+def write_corpus(categories, out_dir):
+    site_base = "https://andrewleftmain.github.io/left-main-help-center"
+    sections = []
+    for cat in categories:
+        for art in cat["articles"]:
+            text = html_to_text(art["html"])
+            sections.append(
+                f'### Article: {art["title"]}\nCategory: {cat["title"]}\n'
+                f'URL: {site_base}/{cat["slug"]}/{art["slug"]}.html\n\n{text}'
+            )
+    (out_dir / "corpus.txt").write_text("\n\n---\n\n".join(sections))
+
+
 STYLES = (ROOT / "styles.css").read_text() if (ROOT / "styles.css").exists() else ""
 SCRIPT_JS = (ROOT / "script.js").read_text() if (ROOT / "script.js").exists() else ""
 
@@ -97,6 +133,7 @@ def render_sidebar(categories, prefix, active_cat_slug=None, active_art_slug=Non
     out.append('<div class="brand-mark"><span class="word">Left&nbsp;Main</span><span class="tag">Help Center</span></div>')
     home_active = " active" if active_cat_slug is None else ""
     out.append(f'<a class="sidebar-home{home_active}" href="{prefix}index.html">Overview</a>')
+    out.append(f'<a class="sidebar-ask" href="{prefix}ask/index.html">\U0001F4AC Ask a question</a>')
     for cat in categories:
         is_current = cat["slug"] == active_cat_slug
         open_attr = " open" if is_current else ""
@@ -173,6 +210,8 @@ def build(out_dir):
         shutil.copytree(ROOT / "assets", out_dir / "assets")
     if (ROOT / "editor").exists():
         shutil.copytree(ROOT / "editor", out_dir / "editor")
+    if (ROOT / "ask").exists():
+        shutil.copytree(ROOT / "ask", out_dir / "ask")
 
     (out_dir / "content-index.json").write_text(json.dumps({
         "categories": [
@@ -183,6 +222,7 @@ def build(out_dir):
             for c in categories
         ]
     }, indent=2))
+    write_corpus(categories, out_dir)
 
     total_articles = sum(len(c["articles"]) for c in categories)
     cards = []

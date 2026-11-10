@@ -99,6 +99,8 @@ details[open] > summary { margin-bottom: 10px; }
 .sidebar .cat-articles a { display: block; color: #c9d6c9; text-decoration: none; font-size: 13px; padding: 5px 8px; border-radius: var(--r-sm); border-left: 2px solid transparent; }
 .sidebar .cat-articles a:hover { background: rgba(255,255,255,.06); color: #fff; }
 .sidebar .cat-articles a.active { background: rgba(255,255,255,.1); color: #fff; border-left-color: var(--accent-cta); }
+.sidebar-ask { display: block; background: var(--accent-cta); color: var(--accent-cta-ink); text-decoration: none; font-family: var(--font-display); font-weight: 600; font-size: 13.5px; text-align: center; padding: 9px 10px; border-radius: var(--r-md); margin-bottom: 14px; }
+.sidebar-ask:hover { background: var(--accent-cta-hover); }
 .sidebar-footer { margin-top: 14px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,.12); }
 .sidebar-footer a { font-size: 12.5px; color: #9fb59f; text-decoration: none; }
 .sidebar-footer a:hover { color: #fff; }
