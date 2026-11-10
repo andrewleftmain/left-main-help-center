@@ -1,0 +1,70 @@
+<!--
+title: November 2025
+order: 1
+subcat: 2025
+-->
+<p>Release Notes for Version 1.569</p>
+<h2 id="cadence-setup-wizard-demo">Cadence Setup Wizard (<a href="https://www.loom.com/share/c423e592ce014a9097ab428d47263ca0" rel="noopener noreferrer" target="_blank">Demo</a>)</h2>
+<p>Setting up Cadences is now faster and easier than ever!<br/>
+Admins no longer need to navigate Salesforce Setup to configure Cadences. The new Cadence Setup Wizard, available in the Cadence App Configuration app, centralizes all setup options in one place.</p>
+<h3 id="highlights">Highlights</h3>
+<ul>
+<li><strong>Default SMS Sending Numbers:</strong> Choose the preferred “From” number — Record Owner, User Profile, or Org-Wide — and rank fallback options.  </li>
+<li><strong>Default Email Addresses:</strong> View who scheduled cadence emails send from and optionally choose an Org-Wide Email Address to use as the default sender.  </li>
+<li><strong>Productized Automations:</strong> Toggle built-in rules to automatically stop Cadences when leads convert or receive inbound communication.  </li>
+<li><strong>Advanced Settings (New!):</strong></li>
+<li>Use the Recipient's Phone field as a fallback for SMS sends.</li>
+<li>Enable timezone fallbacks to ensure accurate send times.</li>
+</ul>
+<p><strong>No action required</strong> — existing settings are automatically preserved.<br/>
+We recommend exploring the new Setup Wizard to take advantage of org-wide defaults and advanced automation options.</p>
+<hr/>
+<h3 id="how-to-use-the-new-setup-wizard">How to Use the New Setup Wizard</h3>
+<ol>
+<li>Navigate to <strong>Cadence App Configuration → See new Cadence Setup tab</strong>.  </li>
+<li>Review and confirm your <strong>default SMS and email sender preferences</strong>.  </li>
+<li>View the <strong>Automations</strong> tab to enable or disable automatic cadence stop rules.  </li>
+<li>Configure <strong>Advanced Settings</strong> to define working hours and additional Phone field options.  </li>
+<li>Click <strong>Save</strong> to apply settings.  </li>
+</ol>
+<p><em>Tip: Changes made in the Setup Wizard apply upon save and can be updated anytime by Cadence Admins.</em>
+<img alt="New Tab in Cadences App Configuration" src="assets/images/screenshot-2025-10-27-at-11-03-25-am.png"/>{height="" width=""}</p>
+<hr/>
+<h2 id="enhanced-cadence-tracking-status-visibility">Enhanced Cadence Tracking &amp; Status Visibility</h2>
+<p>We’ve added two new fields to improve transparency into cadence activity:<br/>
+- <strong>Stopped Reason</strong> – Provides context on why a cadence stopped (e.g., manual or automation).<br/>
+- <strong>Stopped Timestamp</strong> – Automatically captures the exact time a cadence stopped, displayed in your org’s local timezone.  </p>
+<p>When a cadence is stopped, all pending activities (emails, texts, calls, tasks) are canceled and marked with a new <strong>Canceled</strong> status on the Cadence object — ensuring clear visibility between completed and canceled actions.<br/>
+<img alt="Stopped Reason and Timestamp" src="assets/images/screenshot-2025-10-27-at-11-15-05-am.png"/>{height="" width=""}</p>
+<hr/>
+<h2 id="timezone-aware-messaging">Timezone-Aware Messaging</h2>
+<p>Cadence Date/Time fields now honor the <strong>recipient’s local timezone</strong> when scheduling sends, ensuring messages reach recipients at the right time — no manual adjustments needed.</p>
+<h2 id="dealsignals-demo"><strong>DealSignals</strong> (<a href="https://www.loom.com/share/8056650c94be4fb88ad8aa4ee15bc967" rel="noopener noreferrer" target="_blank">Demo</a>)</h2>
+<p><strong>Smarter Enrichment, Deeper Insights</strong>
+We’re excited to announce the November release of DealSignals, bringing two new stress indicators and expanded property attributes to help users identify opportunities and risk with even greater precision.</p>
+<p><strong>New Stress Indicators</strong>
+DealSignals now automatically detects and surfaces two new stress indicators within the Enriched Property Data Lightning Web Component:</p>
+<p><strong>Utility Liens</strong> – Identify properties carrying unpaid utility obligations, a common signal of financial distress.</p>
+<p><strong>Divorce Judgments</strong> – Detect potential ownership changes or motivated sellers due to recent divorce-related judgments.
+<img alt="DS2.png" src="assets/images/ds2.png"/>{height="" width=""}</p>
+<p><strong>Additional Property Attributes</strong>
+We’ve expanded the dataset available through the Enrichment Flow to include a richer view of mortgage and lien activity. These fields will soon also be available for new prospect subscriptions, allowing even more granular targeting.
+New Attributes:</p>
+<ul>
+<li>Assessor’s Parcel Number</li>
+<li>Subdivision Name</li>
+<li>Mortgage Recording Date</li>
+<li>Mortgage Loan Amount</li>
+<li>Mortgage Loan Type</li>
+<li>Mortgage Interest Rate</li>
+<li>Involuntary Lien Type</li>
+<li>Involuntary Lien Judgment Amount</li>
+<li>Involuntary Lien Amount</li>
+<li>Involuntary Lien Recording Date</li>
+<li>Involuntary Lien Parties Full Name</li>
+</ul>
+<p><img alt="DS3.png" src="assets/images/ds3.png"/>{height="" width=""}</p>
+<p><img alt="DS4.png" src="assets/images/ds4.png"/>{height="" width=""}</p>
+<p><img alt="DS5.png" src="assets/images/ds5.png"/>{height="" width=""}</p>
+<p><strong>Availability</strong>:
+These enhancements will begin rolling out in November across all organizations using DealSignals. Attributes will first appear in enrichment results, followed by availability for subscription-based prospecting shortly thereafter.</p>

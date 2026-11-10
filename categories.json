@@ -1,0 +1,78 @@
+{
+  "getting-started": {
+    "title": "Getting Started",
+    "order": 1
+  },
+  "team-roles": {
+    "title": "Team Roles",
+    "order": 2
+  },
+  "cadences": {
+    "title": "Cadences",
+    "order": 5
+  },
+  "campaigns": {
+    "title": "Campaigns",
+    "order": 6
+  },
+  "data-management": {
+    "title": "Data Management",
+    "order": 7
+  },
+  "dealsignals-1": {
+    "title": "DealSignals",
+    "order": 8
+  },
+  "disposignals": {
+    "title": "DispoSignals",
+    "order": 9
+  },
+  "left-main-exchange-lmx": {
+    "title": "Left Main Exchange (LMX)",
+    "order": 10
+  },
+  "legacy-direct-mail": {
+    "title": "Legacy Direct Mail",
+    "order": 11
+  },
+  "next-best-action": {
+    "title": "Next Best Action",
+    "order": 13
+  },
+  "project-management": {
+    "title": "Project Management",
+    "order": 15
+  },
+  "property-sales-ai": {
+    "title": "Property Sales AI",
+    "order": 16
+  },
+  "quickbooks": {
+    "title": "QuickBooks",
+    "order": 17
+  },
+  "release-notes": {
+    "title": "Release Notes",
+    "order": 18
+  },
+  "retail-app": {
+    "title": "Retail App",
+    "order": 19
+  },
+  "salesforce": {
+    "title": "Salesforce",
+    "order": 20
+  },
+  "salesforce-maps": {
+    "title": "Salesforce Maps",
+    "order": 21
+  },
+  "general-administration": {
+    "title": "General Administration",
+    "order": 25
+  },
+  "troubleshooting": {
+    "title": "Troubleshooting Guides",
+    "order": 26
+  }
+}
